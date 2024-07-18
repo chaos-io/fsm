@@ -1,0 +1,59 @@
+@startuml
+namespace fsm {
+    class Blueprint << (S,Aquamarine) >> {
+        - transitions list
+        - start uint8
+
+        + From(start uint8) *Transition
+        + Add(t *Transition) 
+        + Start(state uint8) 
+        + Machine() *Machine
+
+    }
+    class Machine << (S,Aquamarine) >> {
+        - transitions list
+        - state uint8
+
+        - isLegal(a uint8, b uint8) bool
+
+        + Allows(b uint8) bool
+        + Disallows(b uint8) bool
+        + State() uint8
+        + Goto(state uint8) error
+
+    }
+    class Transition << (S,Aquamarine) >> {
+        - start bool
+        - from uint8
+        - fromSet bool
+        - to uint8
+        - toSet bool
+        - hash uint16
+        - blueprint *Blueprint
+        - fn <font color=blue>func</font>(*Machine) 
+
+        - recalculate() 
+
+        + From(from uint8) *Transition
+        + To(to uint8) *Transition
+        + Then(fn Handler) *Transition
+
+    }
+    class fsm.Handler << (T, #FF7700) >>  {
+    }
+    class fsm.list << (T, #FF7700) >>  {
+    }
+    class list << (S,Aquamarine) >> {
+        + Len() int
+        + Swap(a int, b int) 
+        + Less(a int, b int) bool
+        + Search(x uint16) *Transition
+        + InsertPos(v *Transition) int
+
+    }
+}
+
+
+"fsm.<font color=blue>func</font>(*Machine) " #.. "fsm.Handler"
+"fsm.[]*Transition" #.. "fsm.list"
+@enduml
