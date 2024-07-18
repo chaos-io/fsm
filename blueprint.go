@@ -1,5 +1,10 @@
 package fsm
 
+import (
+	"fmt"
+	"strings"
+)
+
 type Blueprint struct {
 	transitions list
 	start       uint8
@@ -43,4 +48,22 @@ func (b *Blueprint) Machine() *Machine {
 	}
 
 	return fsm
+}
+
+func (b *Blueprint) Print() {
+	if len(b.transitions) == 0 {
+		fmt.Println("<-")
+		return
+	}
+
+	builder := strings.Builder{}
+	for i, t := range b.transitions {
+		if i < len(b.transitions)-1 {
+			builder.WriteString(fmt.Sprintf("(%v -> %v) -> ", t.from, t.to))
+		} else {
+			builder.WriteString(fmt.Sprintf("(%v -> %v)", t.from, t.to))
+		}
+	}
+
+	fmt.Println(builder.String())
 }
