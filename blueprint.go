@@ -7,7 +7,7 @@ import (
 
 type Blueprint struct {
 	transitions list
-	start       uint8
+	start       string
 }
 
 // New creates a new finite state machine blueprint.
@@ -20,7 +20,7 @@ func New() *Blueprint {
 // From returns a new transition for the blueprint.
 // The transition will be added to the blueprint automatically when it has both
 // "from" and "to" values.
-func (b *Blueprint) From(start uint8) *Transition {
+func (b *Blueprint) From(start string) *Transition {
 	return (&Transition{blueprint: b}).From(start)
 }
 
@@ -36,7 +36,7 @@ func (b *Blueprint) Add(t *Transition) {
 }
 
 // Start sets the start state for the machine.
-func (b *Blueprint) Start(state uint8) {
+func (b *Blueprint) Start(state string) {
 	b.start = state
 }
 

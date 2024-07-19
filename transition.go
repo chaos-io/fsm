@@ -11,17 +11,17 @@ type Handler func(m *Machine)
 // Transition represents a transition between two states.
 type Transition struct {
 	start     bool
-	from      uint8
+	from      string
 	fromSet   bool
-	to        uint8
+	to        string
 	toSet     bool
-	hash      uint16
+	hash      string
 	blueprint *Blueprint
 	fn        func(m *Machine)
 }
 
 // From sets the source state of the transition.
-func (t *Transition) From(from uint8) *Transition {
+func (t *Transition) From(from string) *Transition {
 	t.from = from
 	t.fromSet = true
 	t.recalculate()
@@ -29,7 +29,7 @@ func (t *Transition) From(from uint8) *Transition {
 }
 
 // To sets the destination state of the transition.
-func (t *Transition) To(to uint8) *Transition {
+func (t *Transition) To(to string) *Transition {
 	t.to = to
 	t.toSet = true
 	t.recalculate()
@@ -57,8 +57,8 @@ func (t *Transition) Then(fn Handler) *Transition {
 // serialize serializes a transition between two states into a single value,
 // where the first 8 bits are the "from" and the last 8 bits are the "to"
 // state.
-func serialize(from, to uint8) uint16 {
-	return (uint16(from) << 8) | uint16(to)
+func serialize(from, to string) string {
+	return from + "_" + to
 }
 
 // list represents a list of transitions.
@@ -81,7 +81,7 @@ func (t list) Less(a, b int) bool {
 
 // Search searches for the specified hash in the list and returns it if it is
 // present.
-func (t list) Search(x uint16) *Transition {
+func (t list) Search(x string) *Transition {
 	low, high := 0, len(t)-1
 	for low <= high {
 		i := (low + high) / 2
