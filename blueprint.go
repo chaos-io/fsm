@@ -50,6 +50,7 @@ func (b *Blueprint) Machine() *Machine {
 	return fsm
 }
 
+// Print print the transition list.
 func (b *Blueprint) Print() {
 	if len(b.transitions) == 0 {
 		fmt.Println("<-")
