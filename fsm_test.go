@@ -86,35 +86,39 @@ func BenchmarkBuildMachine(b *testing.B) {
 
 func TestBlueprint(t *testing.T) {
 	/*
-		0 -> 1 -> 2 -> 4
-		0 -> 1 -> 3 -> 4
+		A -> B -> C
+		A -> B <-> D
 	*/
 	bp := New()
-	bp.Start("0")
+	bp.Start(A)
 	bp.Print()
-	bp.From("0").To("1")
+	bp.From(A).To(B)
 	bp.Print()
-	bp.From("1").To("2").Then(func(m *Machine) { fmt.Println("from 1 to 2") })
+	bp.From(B).To(C).Then(func(m *Machine) { fmt.Println("from B to C") })
 	bp.Print()
-	bp.From("1").To("3").Then(func(m *Machine) { fmt.Println("from 1 to 3") })
+	bp.From(B).To(D).Then(func(m *Machine) { fmt.Println("from B to D") })
 	bp.Print()
-	bp.From("2").To("4").Then(func(m *Machine) { fmt.Println("from 2 to 4") })
-	bp.Print()
-	bp.From("3").To("4").Then(func(m *Machine) { fmt.Println("from 3 to 4") })
+	bp.From(D).To(B).Then(func(m *Machine) { fmt.Println("from D to B") })
 	bp.Print()
 
 	m := bp.Machine()
-	assert.NoError(t, m.Goto("1"))
-	assert.NoError(t, m.Goto("2"))
-	assert.NoError(t, m.Goto("4"))
+	assert.NoError(t, m.Goto(B))
+	assert.NoError(t, m.Goto(C))
 
 	m = bp.Machine()
-	assert.NoError(t, m.Goto("1"))
-	assert.NoError(t, m.Goto("3"))
-	assert.NoError(t, m.Goto("4"))
+	assert.NoError(t, m.Goto(B))
+	assert.NoError(t, m.Goto(D))
+	assert.NoError(t, m.Goto(B))
+	assert.NoError(t, m.Goto(D))
 
 	m = bp.Machine()
-	assert.NoError(t, m.Goto("1"))
-	assert.NoError(t, m.Goto("2"))
-	assert.Error(t, m.Goto("3"))
+	assert.NoError(t, m.Goto(B))
+	assert.NoError(t, m.Goto(D))
+	assert.NoError(t, m.Goto(B))
+	assert.NoError(t, m.Goto(C))
+
+	m = bp.Machine()
+	assert.NoError(t, m.Goto(B))
+	assert.NoError(t, m.Goto(C))
+	assert.Error(t, m.Goto(D))
 }
