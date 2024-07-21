@@ -84,11 +84,11 @@ func BenchmarkBuildMachine(b *testing.B) {
 	}
 }
 
-func TestBlueprint(t *testing.T) {
-	/*
-		A -> B -> C
-		A -> B <-> D
-	*/
+/*
+A -> B -> C
+A -> B <-> D
+*/
+func makeMachine2() *Machine {
 	bp := New()
 	bp.Start(A)
 	bp.Print()
@@ -101,24 +101,43 @@ func TestBlueprint(t *testing.T) {
 	bp.From(D).To(B).Then(func(m *Machine) { fmt.Println("from D to B") })
 	bp.Print()
 
-	m := bp.Machine()
+	return bp.Machine()
+}
+
+func TestBlueprint(t *testing.T) {
+	m := makeMachine2()
 	assert.NoError(t, m.Goto(B))
 	assert.NoError(t, m.Goto(C))
 
-	m = bp.Machine()
+	m = makeMachine2()
 	assert.NoError(t, m.Goto(B))
 	assert.NoError(t, m.Goto(D))
 	assert.NoError(t, m.Goto(B))
 	assert.NoError(t, m.Goto(D))
 
-	m = bp.Machine()
+	m = makeMachine2()
 	assert.NoError(t, m.Goto(B))
 	assert.NoError(t, m.Goto(D))
 	assert.NoError(t, m.Goto(B))
 	assert.NoError(t, m.Goto(C))
 
-	m = bp.Machine()
+	m = makeMachine2()
 	assert.NoError(t, m.Goto(B))
 	assert.NoError(t, m.Goto(C))
 	assert.Error(t, m.Goto(D))
+}
+
+func TestHasNext(t *testing.T) {
+	m := makeMachine2()
+	assert.NoError(t, m.Goto(B))
+	assert.True(t, m.HasNext())
+	assert.NoError(t, m.Goto(C))
+	assert.False(t, m.HasNext())
+
+	m = makeMachine2()
+	assert.NoError(t, m.Goto(B))
+	assert.NoError(t, m.Goto(C))
+	assert.False(t, m.HasNext())
+	assert.Error(t, m.Goto(D))
+	assert.False(t, m.HasNext())
 }

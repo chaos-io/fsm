@@ -31,6 +31,11 @@ func (f *Machine) Disallows(b string) bool {
 	return !f.Allows(b)
 }
 
+// HasNext returns whether or not the specified transition state has next state.
+func (f *Machine) HasNext() bool {
+	return f.transitions.SearchNext(f.state) != nil
+}
+
 // State returns the current state.
 func (f *Machine) State() string {
 	return f.state

@@ -2,6 +2,7 @@ package fsm
 
 import (
 	"sort"
+	"strings"
 )
 
 // Handler represents a callback to be called when the machine performs a
@@ -88,6 +89,25 @@ func (t list) Search(x string) *Transition {
 		if t[i].hash > x {
 			high = i - 1
 		} else if t[i].hash < x {
+			low = i + 1
+		} else {
+			return t[i]
+		}
+	}
+
+	return nil
+}
+
+// SearchNext searches for the specified prefix hash in the list and returns it if
+// it is present.
+func (t list) SearchNext(x string) *Transition {
+	low, high := 0, len(t)-1
+	for low <= high {
+		i := (low + high) / 2
+		from := strings.Split(t[i].hash, "_")[0]
+		if from > x {
+			high = i - 1
+		} else if from < x {
 			low = i + 1
 		} else {
 			return t[i]
